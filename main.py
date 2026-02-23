@@ -1,5 +1,6 @@
 from datetime import datetime
-from fastapi import FastAPI, HTTPException
+from random import randint
+from fastapi import FastAPI, HTTPException, Request
 from typing import Any
 
 # app an instance of fastapi
@@ -26,3 +27,14 @@ async def read_task(id : int):
         if task.get("task_id") == id:
             return{"task" : task}
     raise HTTPException(status_code=404)
+
+@app.post("/tasks")
+async def create_task(body : dict[str, Any]):
+
+    new : Any =  {"task_id" : randint(100, 200),
+     "task_name" : body.get("name"),
+     "due_date" : body.get("due_date"),
+     "created_at" : datetime.now()
+     }
+    data.append(new)
+    return{"tasks" : new}

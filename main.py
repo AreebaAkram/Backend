@@ -1,6 +1,6 @@
 from datetime import datetime
 from random import randint
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Response
 from typing import Any
 
 # app an instance of fastapi
@@ -38,3 +38,25 @@ async def create_task(body : dict[str, Any]):
      }
     data.append(new)
     return{"tasks" : new}
+
+@app.put("/tasks/{id}")
+async def update_task(id : int, body : dict[str, Any]):
+    for index, task in enumerate(data):
+        if task.get("task_id") == id:
+            updated : Any =  {
+                "task_id" : id,
+                "task_name" : body.get("name"),
+                "due_date" : body.get("due_date"),
+                "created_at" : task.get("created_at")
+            }
+            data[index] = updated
+            return{"task" : updated}
+    raise HTTPException(status_code=404)
+
+@app.delete("/tasks/{id}")
+async def delete_task(id: int):
+    for index, task in enumerate(data):
+        if task.get("task_id") == id:
+            data.pop(index)
+            return Response(status_code=204)
+    raise HTTPException(status_code=404)
